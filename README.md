@@ -1,7 +1,5 @@
 # Calculadora de Banco de Capacitores
 
-![Captura de pantalla de la calculadora](screenshot.png) <!-- Si tienes una captura de pantalla, inclúyela aquí -->
-
 Este es un proyecto de una calculadora en línea que permite determinar la capacitancia necesaria para compensar el factor de potencia en un sistema eléctrico. La herramienta es útil para ingenieros, técnicos y estudiantes que trabajan con circuitos eléctricos y necesitan calcular bancos de capacitores.
 
 ---
