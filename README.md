@@ -98,15 +98,15 @@ Este proyecto está bajo la licencia [MIT](LICENSE). Siéntete libre de usarlo, 
 ## Autor
 
 - **Tu Nombre**  
-  - GitHub: [@tuusuario](https://github.com/tuusuario)  
-  - Email: tucorreo@example.com  
+  - GitHub: [@Belita-Lili](https://github.com/Belita-Lili)  
+  - Email: lbecerriltap@gmail.com  
 
 ---
 
 ## Capturas de pantalla
 
-![Captura de pantalla 1](screenshot1.png)  
-![Captura de pantalla 2](screenshot2.png)  
+![image](https://github.com/user-attachments/assets/1de743e7-7994-42a2-aab0-575ca2cfe64c)
+
 
 ---
 
@@ -116,5 +116,3 @@ Este proyecto está bajo la licencia [MIT](LICENSE). Siéntete libre de usarlo, 
 - [Calculadora en línea](https://tusitio.com) <!-- Si tienes un sitio web, inclúyelo aquí -->
 
 ---
-
-Este `README` proporciona una descripción completa del proyecto, incluyendo cómo usarlo, las fórmulas utilizadas, cómo contribuir y más. Puedes personalizarlo según tus necesidades y agregar más detalles si es necesario.
