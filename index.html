@@ -5,52 +5,122 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Banco de Capacitores</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
-        .container { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
-        input, button { margin: 10px 0; padding: 10px; width: 100%; }
-        #resultado { margin-top: 20px; font-weight: bold; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #resultado {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Calculadora de Capacitores</h2>
+        
         <label for="potencia">Potencia (kW):</label>
-        <input type="number" id="potencia" placeholder="Ingrese kW">
+        <input type="number" id="potencia" placeholder="Ingrese kW" min="0">
         
-        <label for="fpActual">Factor de potencia actual:</label>
-        <input type="number" step="0.01" id="fpActual" placeholder="Ingrese FP actual">
+        <label for="fpActual">Factor de potencia actual (0 a 1):</label>
+        <input type="number" step="0.01" id="fpActual" placeholder="Ingrese FP actual" min="0.01" max="0.99">
         
-        <label for="fpDeseado">Factor de potencia deseado:</label>
-        <input type="number" step="0.01" id="fpDeseado" placeholder="Ingrese FP deseado">
+        <label for="fpDeseado">Factor de potencia deseado (0 a 1):</label>
+        <input type="number" step="0.01" id="fpDeseado" placeholder="Ingrese FP deseado" min="0.01" max="0.99">
         
         <label for="voltaje">Voltaje (V):</label>
-        <input type="number" id="voltaje" placeholder="Ingrese voltaje">
+        <input type="number" id="voltaje" placeholder="Ingrese voltaje" min="1">
         
         <button onclick="calcularCapacitor()">Calcular</button>
+        <button onclick="resetForm()">Reset</button>
         
         <div id="resultado"></div>
     </div>
 
     <script>
+        const FRECUENCIA = 60; // Frecuencia en Hz
+
         function calcularCapacitor() {
-            let potencia = parseFloat(document.getElementById("potencia").value);
-            let fpActual = parseFloat(document.getElementById("fpActual").value);
-            let fpDeseado = parseFloat(document.getElementById("fpDeseado").value);
-            let voltaje = parseFloat(document.getElementById("voltaje").value);
-            
-            if (isNaN(potencia) || isNaN(fpActual) || isNaN(fpDeseado) || isNaN(voltaje) || fpActual <= 0 || fpDeseado <= 0 || fpActual >= 1 || fpDeseado >= 1 || voltaje <= 0) {
-                document.getElementById("resultado").innerHTML = "Ingrese valores válidos.";
+            const potencia = parseFloat(document.getElementById("potencia").value);
+            const fpActual = parseFloat(document.getElementById("fpActual").value);
+            const fpDeseado = parseFloat(document.getElementById("fpDeseado").value);
+            const voltaje = parseFloat(document.getElementById("voltaje").value);
+
+            if (isNaN(potencia) || isNaN(fpActual) || isNaN(fpDeseado) || isNaN(voltaje) || 
+                fpActual <= 0 || fpDeseado <= 0 || fpActual >= 1 || fpDeseado >= 1 || voltaje <= 0) {
+                mostrarError("Ingrese valores válidos.");
                 return;
             }
-            
-            let cosPhiActual = Math.acos(fpActual);
-            let cosPhiDeseado = Math.acos(fpDeseado);
-            
-            let kvarNecesario = potencia * (Math.tan(cosPhiActual) - Math.tan(cosPhiDeseado));
-            let microfaradios = (kvarNecesario * 1e6) / (2 * Math.PI * 60 * Math.pow(voltaje, 2));
-            
-            document.getElementById("resultado").innerHTML = `Se requiere ${kvarNecesario.toFixed(2)} kVAR de compensación.<br>
-            Capacitancia necesaria: ${microfaradios.toFixed(2)} µF.`;
+
+            const kvarNecesario = calcularKvarNecesario(potencia, fpActual, fpDeseado);
+            const microfaradios = calcularCapacitancia(kvarNecesario, voltaje);
+
+            mostrarResultado(kvarNecesario, microfaradios);
+        }
+
+        function calcularKvarNecesario(potencia, fpActual, fpDeseado) {
+            const cosPhiActual = Math.acos(fpActual);
+            const cosPhiDeseado = Math.acos(fpDeseado);
+            return potencia * (Math.tan(cosPhiActual) - Math.tan(cosPhiDeseado));
+        }
+
+        function calcularCapacitancia(kvarNecesario, voltaje) {
+            return (kvarNecesario * 1e6) / (2 * Math.PI * FRECUENCIA * Math.pow(voltaje, 2));
+        }
+
+        function mostrarResultado(kvarNecesario, microfaradios) {
+            document.getElementById("resultado").innerHTML = `
+                Se requiere ${kvarNecesario.toFixed(2)} kVAR de compensación.<br>
+                Capacitancia necesaria: ${microfaradios.toFixed(2)} µF.
+            `;
+        }
+
+        function mostrarError(mensaje) {
+            document.getElementById("resultado").innerHTML = `<span class="error">${mensaje}</span>`;
+        }
+
+        function resetForm() {
+            document.getElementById("potencia").value = "";
+            document.getElementById("fpActual").value = "";
+            document.getElementById("fpDeseado").value = "";
+            document.getElementById("voltaje").value = "";
+            document.getElementById("resultado").innerHTML = "";
         }
     </script>
 </body>
