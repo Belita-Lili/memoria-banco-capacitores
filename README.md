@@ -38,22 +38,18 @@ Este es un proyecto de una calculadora en línea que permite determinar la capac
 ## Fórmulas utilizadas
 
 ### Cálculo de kVAR necesarios:
-\[
-\text{kVAR} = P \times (\tan(\cos^{-1}(\text{FP}_{\text{actual}})) - \tan(\cos^{-1}(\text{FP}_{\text{deseado}})))
-\]
+kVAR = P x (tan(cos^{-1}(FP_actual)) - tan(cos^{-1}(FP_deseado)))
 Donde:
-- \( P \) = Potencia activa (kW).
-- \( \text{FP}_{\text{actual}} \) = Factor de potencia actual.
-- \( \text{FP}_{\text{deseado}} \) = Factor de potencia deseado.
+- P  = Potencia activa (kW).
+- FP_actual = Factor de potencia actual.
+- FP_deseado = Factor de potencia deseado.
 
 ### Cálculo de capacitancia:
-\[
-C = \frac{\text{kVAR} \times 10^6}{2 \pi f V^2}
-\]
+C = (kVAR x 10^6)/(2 pi f V^2)
 Donde:
-- \( C \) = Capacitancia (µF).
-- \( f \) = Frecuencia (60 Hz).
-- \( V \) = Voltaje (V).
+- C = Capacitancia (µF).
+- f = Frecuencia (60 Hz).
+- V = Voltaje (V).
 
 ---
 
