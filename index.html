@@ -1,127 +1,842 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Banco de Capacitores</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
-            background-color: #f4f4f9;
-        }
-        .container {
-            max-width: 400px;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: bold;
-        }
-        input, button {
-            margin: 10px 0;
-            padding: 10px;
-            width: 100%;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #resultado {
-            margin-top: 20px;
-            font-weight: bold;
-            color: #333;
-        }
-        .error {
-            color: red;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Memoria de Cálculo - Bancos de Capacitores</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #1a5f7a;
+      --secondary-color: #57C5B6;
+      --accent-color: #159895;
+      --light-color: #e8f9fd;
+      --dark-color: #002B5B;
+      --highlight-color: #00a8cc;
+      --text-color: #333;
+      --light-text: #f8f8ff;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      background-color: var(--light-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    header {
+      background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+      color: var(--light-text);
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1, h2, h3 {
+      color: var(--primary-color);
+    }
+    
+    h1 {
+      margin: 0;
+      font-size: 2.2rem;
+    }
+    
+    h2 {
+      border-bottom: 2px solid var(--accent-color);
+      padding-bottom: 0.5rem;
+      margin-top: 2rem;
+    }
+    
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 1rem 0;
+      background-color: white;
+    }
+    
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    
+    th {
+      background-color: var(--primary-color);
+      color: var(--light-text);
+    }
+    
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    
+    .chart-container {
+      width: 100%;
+      height: 400px;
+      margin: 2rem 0;
+      background-color: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+      margin: 0.5rem 0;
+    }
+    
+    button:hover {
+      background-color: var(--dark-color);
+    }
+    
+    input, select {
+      padding: 0.6rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 100%;
+      margin: 0.5rem 0;
+    }
+    
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .form-col {
+      flex: 1;
+    }
+    
+    .result-highlight {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+    
+    .tabs {
+      display: flex;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .tab {
+      padding: 0.8rem 1.5rem;
+      cursor: pointer;
+      background-color: #f1f1f1;
+      border: 1px solid #ddd;
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+      margin-right: 0.5rem;
+    }
+    
+    .tab.active {
+      background-color: white;
+      border-bottom: 1px solid white;
+      margin-bottom: -1px;
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .info-icon {
+      color: var(--accent-color);
+      margin-left: 0.5rem;
+      cursor: help;
+    }
+    
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 200px;
+      background-color: var(--dark-color);
+      color: white;
+      text-align: center;
+      border-radius: 6px;
+      padding: 0.5rem;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.9rem;
+    }
+    
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 2rem;
+      padding: 1rem;
+      color: var(--text-color);
+      font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Calculadora de Capacitores</h2>
-        
-        <label for="potencia">Potencia (kW):</label>
-        <input type="number" id="potencia" placeholder="Ingrese kW" min="0">
-        
-        <label for="fpActual">Factor de potencia actual (0 a 1):</label>
-        <input type="number" step="0.01" id="fpActual" placeholder="Ingrese FP actual" min="0.01" max="0.99">
-        
-        <label for="fpDeseado">Factor de potencia deseado (0 a 1):</label>
-        <input type="number" step="0.01" id="fpDeseado" placeholder="Ingrese FP deseado" min="0.01" max="0.99">
-        
-        <label for="voltaje">Voltaje (V):</label>
-        <input type="number" id="voltaje" placeholder="Ingrese voltaje" min="1">
-        
-        <button onclick="calcularCapacitor()">Calcular</button>
-        <button onclick="resetForm()">Reset</button>
-        
-        <div id="resultado"></div>
+
+  <header>
+    <h1><i class="fas fa-bolt"></i> Memoria de Cálculo - Bancos de Capacitores</h1>
+    <p>Herramienta para dimensionamiento y análisis económico de bancos de capacitores</p>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" onclick="openTab('datos')">Datos Eléctricos</div>
+    <div class="tab" onclick="openTab('banco')">Configuración Banco</div>
+    <div class="tab" onclick="openTab('resultados')">Resultados</div>
+    <div class="tab" onclick="openTab('analisis')">Análisis Económico</div>
+  </div>
+
+  <div id="datos" class="tab-content active card">
+    <h2><i class="fas fa-charging-station"></i> Datos del Sistema Eléctrico</h2>
+    
+    <div class="form-row">
+      <div class="form-col">
+        <div class="form-group">
+          <label for="tension">Tensión del Sistema (kV):</label>
+          <input type="number" id="tension" value="13.8" step="0.1">
+        </div>
+        <div class="form-group">
+          <label for="demanda">Demanda Actual (kW):</label>
+          <input type="number" id="demanda" value="1000" step="10">
+        </div>
+      </div>
+      <div class="form-col">
+        <div class="form-group">
+          <label for="fp-actual">Factor de Potencia Actual:</label>
+          <input type="number" id="fp-actual" value="0.8" step="0.01" min="0" max="1">
+        </div>
+        <div class="form-group">
+          <label for="fp-deseado">Factor de Potencia Deseado:</label>
+          <input type="number" id="fp-deseado" value="0.95" step="0.01" min="0" max="1">
+        </div>
+      </div>
     </div>
+    
+    <h3><i class="fas fa-file-invoice-dollar"></i> Datos Tarifarios CFE</h3>
+    
+    <div class="form-row">
+      <div class="form-col">
+        <div class="form-group">
+          <label for="cargo-recargo">Cargo por Recargo FP (%):</label>
+          <input type="number" id="cargo-recargo" value="2.5" step="0.1">
+        </div>
+      </div>
+      <div class="form-col">
+        <div class="form-group">
+          <label for="costo-kwh">Costo Promedio kWh (USD):</label>
+          <input type="number" id="costo-kwh" value="0.12" step="0.001">
+        </div>
+      </div>
+    </div>
+    
+    <button onclick="calcularPotenciaReactivar()"><i class="fas fa-calculator"></i> Calcular Potencia Reactiva Requerida</button>
+  </div>
 
-    <script>
-        const FRECUENCIA = 60; // Frecuencia en Hz
+  <div id="banco" class="tab-content card">
+    <h2><i class="fas fa-cogs"></i> Configuración del Banco de Capacitores</h2>
+    
+    <div class="form-row">
+      <div class="form-col">
+        <div class="form-group">
+          <label for="potencia-capacitor">Potencia por Capacitor (kVAR):</label>
+          <input type="number" id="potencia-capacitor" value="50" step="5">
+        </div>
+        <div class="form-group">
+          <label for="configuracion">Configuración:</label>
+          <select id="configuracion">
+            <option value="fijo">Banco Fijo</option>
+            <option value="automatico">Banco Automático</option>
+            <option value="mixto">Banco Mixto</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-col">
+        <div class="form-group">
+          <label for="costo-capacitor">Costo por Capacitor (USD):</label>
+          <input type="number" id="costo-capacitor" value="250" step="10">
+        </div>
+        <div class="form-group">
+          <label for="costo-instalacion">Costo de Instalación (USD):</label>
+          <input type="number" id="costo-instalacion" value="1500" step="100">
+        </div>
+      </div>
+    </div>
+    
+    <button onclick="calcularBancoCapacitores()"><i class="fas fa-project-diagram"></i> Calcular Configuración</button>
+  </div>
 
-        function calcularCapacitor() {
-            const potencia = parseFloat(document.getElementById("potencia").value);
-            const fpActual = parseFloat(document.getElementById("fpActual").value);
-            const fpDeseado = parseFloat(document.getElementById("fpDeseado").value);
-            const voltaje = parseFloat(document.getElementById("voltaje").value);
+  <div id="resultados" class="tab-content card">
+    <h2><i class="fas fa-chart-line"></i> Resultados del Cálculo</h2>
+    
+    <div class="form-row">
+      <div class="form-col">
+        <h3>Potencia Reactiva</h3>
+        <table>
+          <tbody id="potenciaTabla">
+            <!-- Se llenará por JS -->
+          </tbody>
+        </table>
+      </div>
+      <div class="form-col">
+        <h3>Configuración del Banco</h3>
+        <table>
+          <tbody id="bancoTabla">
+            <!-- Se llenará por JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="chart-container">
+      <canvas id="fpChart"></canvas>
+    </div>
+  </div>
 
-            if (isNaN(potencia) || isNaN(fpActual) || isNaN(fpDeseado) || isNaN(voltaje) || 
-                fpActual <= 0 || fpDeseado <= 0 || fpActual >= 1 || fpDeseado >= 1 || voltaje <= 0) {
-                mostrarError("Ingrese valores válidos.");
-                return;
+  <div id="analisis" class="tab-content">
+    <div class="card">
+      <h2><i class="fas fa-money-bill-wave"></i> Análisis Económico</h2>
+      
+      <div class="form-row">
+        <div class="form-col">
+          <div class="form-group">
+            <label for="horas-operacion">Horas de Operación al Mes:</label>
+            <input type="number" id="horas-operacion" value="720" step="10">
+          </div>
+          <div class="form-group">
+            <label for="vida-util">Vida Útil (años):</label>
+            <input type="number" id="vida-util" value="10" step="1">
+          </div>
+        </div>
+        <div class="form-col">
+          <div class="form-group">
+            <label for="tasa-descuento">Tasa de Descuento (%):</label>
+            <input type="number" id="tasa-descuento" value="8" step="0.1">
+          </div>
+          <div class="form-group">
+            <label for="mantenimiento">Costo Anual Mantenimiento (%):</label>
+            <input type="number" id="mantenimiento" value="2" step="0.1">
+          </div>
+        </div>
+      </div>
+      
+      <button onclick="calcularAnalisisEconomico()"><i class="fas fa-search-dollar"></i> Calcular Análisis Económico</button>
+      
+      <div class="form-row">
+        <div class="form-col">
+          <h3>Resultados Económicos</h3>
+          <table>
+            <tbody id="economicosTabla">
+              <!-- Se llenará por JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div class="chart-container">
+        <canvas id="economicoChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2023 Herramienta de Cálculo para Bancos de Capacitores | Desarrollado para eficiencia energética</p>
+  </footer>
+
+  <script>
+    // Variables globales para los resultados
+    let resultados = {
+      potenciaReactivar: 0,
+      cantidadCapacitores: 0,
+      potenciaTotal: 0,
+      costoTotal: 0,
+      ahorroMensual: 0,
+      fpActual: 0,
+      fpDeseado: 0,
+      demanda: 0,
+      tension: 0
+    };
+    
+    let chartFP = null;
+    let chartEconomico = null;
+
+    // Función para cambiar entre pestañas
+    function openTab(tabName) {
+      const tabs = document.getElementsByClassName('tab');
+      const tabContents = document.getElementsByClassName('tab-content');
+      
+      for (let tab of tabs) {
+        tab.classList.remove('active');
+      }
+      
+      for (let content of tabContents) {
+        content.classList.remove('active');
+      }
+      
+      document.querySelector(`.tab[onclick="openTab('${tabName}')"]`).classList.add('active');
+      document.getElementById(tabName).classList.add('active');
+    }
+
+    // Función para calcular la potencia reactiva requerida
+    function calcularPotenciaReactivar() {
+      const demanda = parseFloat(document.getElementById('demanda').value);
+      const fpActual = parseFloat(document.getElementById('fp-actual').value);
+      const fpDeseado = parseFloat(document.getElementById('fp-deseado').value);
+      const tension = parseFloat(document.getElementById('tension').value);
+      
+      // Calcular ángulos
+      const anguloActual = Math.acos(fpActual);
+      const anguloDeseado = Math.acos(fpDeseado);
+      
+      // Calcular potencia reactiva actual y deseada
+      const Qactual = demanda * Math.tan(anguloActual);
+      const Qdeseada = demanda * Math.tan(anguloDeseado);
+      
+      // Potencia reactiva a compensar
+      const Qcompensar = Qactual - Qdeseada;
+      
+      // Guardar resultados
+      resultados = {
+        ...resultados,
+        potenciaReactivar: Qcompensar,
+        fpActual,
+        fpDeseado,
+        demanda,
+        tension
+      };
+      
+      // Actualizar tabla de potencia
+      actualizarTablaPotencia();
+      
+      // Abrir pestaña de configuración
+      openTab('banco');
+    }
+    
+    // Función para calcular la configuración del banco de capacitores
+    function calcularBancoCapacitores() {
+      const potenciaCapacitor = parseFloat(document.getElementById('potencia-capacitor').value);
+      const costoCapacitor = parseFloat(document.getElementById('costo-capacitor').value);
+      const costoInstalacion = parseFloat(document.getElementById('costo-instalacion').value);
+      const configuracion = document.getElementById('configuracion').value;
+      
+      // Calcular cantidad de capacitores (redondeando hacia arriba)
+      const cantidad = Math.ceil(resultados.potenciaReactivar / potenciaCapacitor);
+      const potenciaTotal = cantidad * potenciaCapacitor;
+      
+      // Calcular costo total
+      let costoTotal = cantidad * costoCapacitor + costoInstalacion;
+      
+      // Ajustar costo según configuración
+      if (configuracion === 'automatico') {
+        costoTotal *= 1.5; // 50% más costoso
+      } else if (configuracion === 'mixto') {
+        costoTotal *= 1.25; // 25% más costoso
+      }
+      
+      // Guardar resultados
+      resultados = {
+        ...resultados,
+        cantidadCapacitores: cantidad,
+        potenciaTotal,
+        costoTotal,
+        configuracion
+      };
+      
+      // Actualizar tabla de banco
+      actualizarTablaBanco();
+      
+      // Actualizar gráfico de FP
+      actualizarGraficoFP();
+      
+      // Abrir pestaña de resultados
+      openTab('resultados');
+    }
+    
+    // Función para calcular el análisis económico
+    function calcularAnalisisEconomico() {
+      const horasOperacion = parseFloat(document.getElementById('horas-operacion').value);
+      const vidaUtil = parseInt(document.getElementById('vida-util').value);
+      const tasaDescuento = parseFloat(document.getElementById('tasa-descuento').value) / 100;
+      const mantenimiento = parseFloat(document.getElementById('mantenimiento').value) / 100;
+      const cargoRecargo = parseFloat(document.getElementById('cargo-recargo').value) / 100;
+      const costoKwh = parseFloat(document.getElementById('costo-kwh').value);
+      
+      // Calcular ahorros
+      const demandaFacturable = resultados.demanda * (1 + cargoRecargo * (resultados.fpActual < 0.9 ? 1 : 0));
+      const nuevaDemandaFacturable = resultados.demanda * (1 + cargoRecargo * (resultados.fpDeseado < 0.9 ? 1 : 0));
+      
+      const ahorroDemanda = demandaFacturable - nuevaDemandaFacturable;
+      const ahorroEnergia = 0.02 * resultados.demanda * horasOperacion; // Estimación conservadora
+      
+      const ahorroMensual = (ahorroDemanda * 30 * 24 * costoKwh) + (ahorroEnergia * costoKwh);
+      const ahorroAnual = ahorroMensual * 12;
+      
+      // Costo de mantenimiento anual
+      const mantenimientoAnual = resultados.costoTotal * mantenimiento;
+      
+      // Generar flujo de caja
+      let flujos = [-resultados.costoTotal];
+      for(let i = 0; i < vidaUtil; i++) {
+        flujos.push(ahorroAnual - mantenimientoAnual);
+      }
+      
+      // Calcular indicadores financieros
+      const paybackSimple = resultados.costoTotal / ahorroAnual;
+      const roi = (ahorroAnual / resultados.costoTotal) * 100;
+      const npvVal = npv(tasaDescuento, flujos);
+      const irrVal = irr(flujos);
+      
+      // Guardar resultados
+      resultados = {
+        ...resultados,
+        ahorroMensual,
+        ahorroAnual,
+        paybackSimple,
+        roi,
+        npvVal,
+        irrVal,
+        flujos,
+        vidaUtil
+      };
+      
+      // Actualizar tabla económica
+      actualizarTablaEconomica();
+      
+      // Actualizar gráfico económico
+      actualizarGraficoEconomico();
+    }
+    
+    // Función para actualizar la tabla de potencia
+    function actualizarTablaPotencia() {
+      const potenciaTabla = document.getElementById('potenciaTabla');
+      const {
+        fpActual,
+        fpDeseado,
+        potenciaReactivar,
+        demanda,
+        tension
+      } = resultados;
+      
+      // Calcular potencia aparente actual y deseada
+      const Sactual = demanda / fpActual;
+      const Sdeseada = demanda / fpDeseado;
+      
+      // Calcular corriente
+      const Iactual = (Sactual * 1000) / (Math.sqrt(3) * tension);
+      const Ideseada = (Sdeseada * 1000) / (Math.sqrt(3) * tension);
+      
+      const datos = {
+        "Factor Potencia Actual": fpActual.toFixed(3),
+        "Factor Potencia Deseado": fpDeseado.toFixed(3),
+        "Potencia Activa (kW)": demanda.toLocaleString(),
+        "Potencia Reactiva Requerida (kVAR)": potenciaReactivar.toFixed(2),
+        "Potencia Aparente Actual (kVA)": Sactual.toFixed(2),
+        "Potencia Aparente Deseada (kVA)": Sdeseada.toFixed(2),
+        "Corriente Actual (A)": Iactual.toFixed(2),
+        "Corriente Deseada (A)": Ideseada.toFixed(2)
+      };
+      
+      potenciaTabla.innerHTML = '';
+      for(const [key, value] of Object.entries(datos)) {
+        potenciaTabla.innerHTML += `<tr><th>${key}</th><td>${value}</td></tr>`;
+      }
+    }
+    
+    // Función para actualizar la tabla de banco
+    function actualizarTablaBanco() {
+      const bancoTabla = document.getElementById('bancoTabla');
+      const {
+        cantidadCapacitores,
+        potenciaTotal,
+        potenciaReactivar,
+        costoTotal,
+        configuracion
+      } = resultados;
+      
+      const configuracionText = {
+        'fijo': 'Banco Fijo',
+        'automatico': 'Banco Automático',
+        'mixto': 'Banco Mixto'
+      };
+      
+      const datos = {
+        "Tipo de Configuración": configuracionText[configuracion],
+        "Potencia Requerida (kVAR)": potenciaReactivar.toFixed(2),
+        "Potencia por Capacitor (kVAR)": document.getElementById('potencia-capacitor').value,
+        "Número de Capacitores": cantidadCapacitores,
+        "Potencia Total Instalada (kVAR)": potenciaTotal.toFixed(2),
+        "Exceso de Potencia (kVAR)": (potenciaTotal - potenciaReactivar).toFixed(2),
+        "Costo Total Estimado (USD)": costoTotal.toLocaleString('en-US', {style: 'currency', currency: 'USD'})
+      };
+      
+      bancoTabla.innerHTML = '';
+      for(const [key, value] of Object.entries(datos)) {
+        bancoTabla.innerHTML += `<tr><th>${key}</th><td>${value}</td></tr>`;
+      }
+    }
+    
+    // Función para actualizar la tabla económica
+    function actualizarTablaEconomica() {
+      const economicosTabla = document.getElementById('economicosTabla');
+      const {
+        ahorroMensual,
+        ahorroAnual,
+        paybackSimple,
+        roi,
+        npvVal,
+        irrVal,
+        costoTotal
+      } = resultados;
+      
+      const datos = {
+        "Inversión Inicial (USD)": costoTotal.toLocaleString('en-US', {style: 'currency', currency: 'USD'}),
+        "Ahorro Mensual Estimado (USD)": ahorroMensual.toLocaleString('en-US', {style: 'currency', currency: 'USD'}),
+        "Ahorro Anual Estimado (USD)": ahorroAnual.toLocaleString('en-US', {style: 'currency', currency: 'USD'}),
+        "Periodo de Recuperación (años)": paybackSimple.toFixed(2),
+        "Retorno sobre Inversión (ROI) (%)": roi.toFixed(2),
+        "Valor Presente Neto (VPN) (USD)": npvVal.toLocaleString('en-US', {style: 'currency', currency: 'USD'}),
+        "Tasa Interna de Retorno (TIR) (%)": (irrVal * 100).toFixed(2)
+      };
+      
+      economicosTabla.innerHTML = '';
+      for(const [key, value] of Object.entries(datos)) {
+        economicosTabla.innerHTML += `<tr><th>${key}</th><td>${value}</td></tr>`;
+      }
+    }
+    
+    // Función para actualizar el gráfico de FP
+    function actualizarGraficoFP() {
+      const ctx = document.getElementById('fpChart').getContext('2d');
+      const { fpActual, fpDeseado } = resultados;
+      
+      // Destruir gráfico anterior si existe
+      if (chartFP) {
+        chartFP.destroy();
+      }
+      
+      chartFP = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['FP Actual', 'FP Deseado', 'Mejora Requerida'],
+          datasets: [{
+            data: [fpActual, fpDeseado - fpActual, 1 - fpDeseado],
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.7)',
+              'rgba(54, 162, 235, 0.7)',
+              'rgba(255, 206, 86, 0.7)'
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Mejora del Factor de Potencia',
+              font: {
+                size: 16
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const label = context.label || '';
+                  const value = context.raw || 0;
+                  return `${label}: ${value.toFixed(3)}`;
+                }
+              }
             }
-
-            const kvarNecesario = calcularKvarNecesario(potencia, fpActual, fpDeseado);
-            const microfaradios = calcularCapacitancia(kvarNecesario, voltaje);
-
-            mostrarResultado(kvarNecesario, microfaradios);
+          },
+          rotation: -90,
+          circumference: 180,
+          cutout: '60%'
         }
-
-        function calcularKvarNecesario(potencia, fpActual, fpDeseado) {
-            const cosPhiActual = Math.acos(fpActual);
-            const cosPhiDeseado = Math.acos(fpDeseado);
-            return potencia * (Math.tan(cosPhiActual) - Math.tan(cosPhiDeseado));
+      });
+    }
+    
+    // Función para actualizar el gráfico económico
+    function actualizarGraficoEconomico() {
+      const ctx = document.getElementById('economicoChart').getContext('2d');
+      const { flujos, vidaUtil } = resultados;
+      
+      // Calcular flujos acumulados
+      let flujosAcumulados = [];
+      let acumulado = 0;
+      for(let f of flujos) {
+        acumulado += f;
+        flujosAcumulados.push(acumulado / 1000); // en miles USD
+      }
+      
+      // Configurar etiquetas de años
+      const labels = Array.from({length: flujos.length}, (_, i) => i === 0 ? 'Inversión' : `Año ${i}`);
+      
+      // Destruir gráfico anterior si existe
+      if (chartEconomico) {
+        chartEconomico.destroy();
+      }
+      
+      chartEconomico = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Flujo Anual (miles USD)',
+              data: flujos.map(f => f / 1000),
+              backgroundColor: 'rgba(26, 95, 122, 0.7)',
+              borderColor: 'rgba(26, 95, 122, 1)',
+              borderWidth: 1,
+              type: 'bar',
+              yAxisID: 'y'
+            },
+            {
+              label: 'Flujo Acumulado (miles USD)',
+              data: flujosAcumulados,
+              borderColor: 'rgba(87, 197, 182, 1)',
+              backgroundColor: 'rgba(87, 197, 182, 0.1)',
+              borderWidth: 2,
+              pointRadius: 4,
+              pointBackgroundColor: 'rgba(87, 197, 182, 1)',
+              fill: true,
+              type: 'line',
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              title: {
+                display: true,
+                text: 'Flujo Anual (miles USD)'
+              },
+              grid: {
+                drawOnChartArea: false
+              }
+            },
+            y1: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              title: {
+                display: true,
+                text: 'Flujo Acumulado (miles USD)'
+              },
+              grid: {
+                drawOnChartArea: false
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Periodo'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Flujo de Caja del Proyecto'
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  let label = context.dataset.label || '';
+                  if (label) {
+                    label += ': ';
+                  }
+                  label += new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0}).format(context.raw * 1000);
+                  return label;
+                }
+              }
+            }
+          }
         }
-
-        function calcularCapacitancia(kvarNecesario, voltaje) {
-            return (kvarNecesario * 1e6) / (2 * Math.PI * FRECUENCIA * Math.pow(voltaje, 2));
-        }
-
-        function mostrarResultado(kvarNecesario, microfaradios) {
-            document.getElementById("resultado").innerHTML = `
-                Se requiere ${kvarNecesario.toFixed(2)} kVAR de compensación.<br>
-                Capacitancia necesaria: ${microfaradios.toFixed(2)} µF.
-            `;
-        }
-
-        function mostrarError(mensaje) {
-            document.getElementById("resultado").innerHTML = `<span class="error">${mensaje}</span>`;
-        }
-
-        function resetForm() {
-            document.getElementById("potencia").value = "";
-            document.getElementById("fpActual").value = "";
-            document.getElementById("fpDeseado").value = "";
-            document.getElementById("voltaje").value = "";
-            document.getElementById("resultado").innerHTML = "";
-        }
-    </script>
+      });
+    }
+    
+    // Función NPV en JS
+    function npv(tasa, flujos) {
+      return flujos.reduce((acc, flujo, i) => acc + flujo / Math.pow(1 + tasa, i), 0);
+    }
+    
+    // Función IRR (búsqueda numérica simple)
+    function irr(flujos, guess=0.1) {
+      let rate = guess;
+      let precision = 1e-6;
+      let maxIter = 1000;
+      let iter = 0;
+      while(iter < maxIter) {
+        let npvVal = npv(rate, flujos);
+        let npvValPlus = npv(rate + precision, flujos);
+        let deriv = (npvValPlus - npvVal) / precision;
+        let newRate = rate - npvVal / deriv;
+        if(Math.abs(newRate - rate) < precision) return newRate;
+        rate = newRate;
+        iter++;
+      }
+      return rate;
+    }
+    
+    // Inicializar con valores por defecto
+    document.addEventListener('DOMContentLoaded', function() {
+      calcularPotenciaReactivar();
+    });
+  </script>
 </body>
 </html>
