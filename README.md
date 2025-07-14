@@ -1,6 +1,8 @@
+# memoria-banco-capacitores
 # Calculadora de Banco de Capacitores
 
 Este es un proyecto de una calculadora en línea que permite determinar la capacitancia necesaria para compensar el factor de potencia en un sistema eléctrico. La herramienta es útil para ingenieros, técnicos y estudiantes que trabajan con circuitos eléctricos y necesitan calcular bancos de capacitores.
+<img width="1585" height="757" alt="image" src="https://github.com/user-attachments/assets/b24af395-2220-40bb-9b77-39b8b8380323" />
 
 ---
 
@@ -89,24 +91,8 @@ Este proyecto está bajo la licencia [MIT](LICENSE). Siéntete libre de usarlo, 
 
 ---
 
-## Autor
-
-- **Tu Nombre**  
-  - GitHub: [@Belita-Lili](https://github.com/Belita-Lili)  
-  - Email: lbecerriltap@gmail.com  
-
----
-
-## Capturas de pantalla
-
-![image](https://github.com/user-attachments/assets/1de743e7-7994-42a2-aab0-575ca2cfe64c)
-
-
----
 
 ## Enlaces útiles
 
 - [Documentación sobre factor de potencia](https://es.wikipedia.org/wiki/Factor_de_potencia)
-- [Calculadora en línea](https://tusitio.com) <!-- Si tienes un sitio web, inclúyelo aquí -->
-
 ---
